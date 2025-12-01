@@ -7,6 +7,8 @@
     
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
@@ -19,22 +21,20 @@
             theme: {
                 extend: {
                     colors: {
-                        // Palette de couleurs de la charte graphique
                         primary: {
                             DEFAULT: '#FF7A00', // Orange principal
                             dark: '#E66E00',
                         },
                         dark: {
-                            DEFAULT: '#111111', // Noir doux pour le texte
+                            DEFAULT: '#111111', // Noir doux
                             light: '#222222',
                         },
                         light: {
-                            DEFAULT: '#FFFFFF', // Blanc
-                            alt: '#F8F8F8', // Blanc cassé pour les sections
+                            DEFAULT: '#FFFFFF', 
+                            alt: '#F8F8F8', 
                         }
                     },
                     fontFamily: {
-                        // Typographie moderne
                         sans: ['Inter', 'sans-serif'],
                     }
                 }
@@ -43,7 +43,7 @@
     </script>
     
     <style>
-        /* Animation pour le "Scroll Reveal" */
+        /* Animation Scroll Reveal */
         .scroll-reveal {
             opacity: 0;
             transform: translateY(30px);
@@ -56,7 +56,7 @@
             transform: translateY(0);
         }
 
-        /* Styles pour la Lightbox (galerie) */
+        /* Lightbox */
         #lightbox {
             position: fixed;
             z-index: 1000;
@@ -65,7 +65,7 @@
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.85);
-            display: none; /* Caché par défaut */
+            display: none;
             justify-content: center;
             align-items: center;
             padding: 2rem;
@@ -213,6 +213,15 @@
                 
                 <div id="gallery-grid" class="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6">
                     </div>
+
+                <div class="text-center mt-16 scroll-reveal">
+                    <button id="download-pdf-btn" onclick="generatePortfolioPDF()" class="inline-flex items-center bg-dark text-white px-8 py-3 rounded-full text-lg font-semibold hover:bg-gray-800 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i data-lucide="download" class="w-5 h-5 mr-2"></i>
+                        <span id="btn-text">Télécharger le Catalogue PDF</span>
+                    </button>
+                    <p id="loading-text" class="text-sm text-gray-500 mt-3 hidden">Création du PDF en cours, cela peut prendre quelques secondes...</p>
+                </div>
+
             </div>
         </section>
 
@@ -329,13 +338,12 @@
             // Initialisation des icônes Lucide
             lucide.createIcons();
 
-            // --- NOUVEAU: Génération dynamique de la galerie (MODIFIÉ: Ordre Décroissant) ---
+            // --- Génération dynamique de la galerie (Ordre Décroissant) ---
             const galleryGrid = document.getElementById('gallery-grid');
             if (galleryGrid) {
-                const totalImages = 27; // Assure-toi d'avoir 26 images dans le dossier
+                const totalImages = 27; 
                 const imagePath = 'images'; 
 
-                // Boucle inversée : commence à 26 et descend jusqu'à 1
                 for (let i = totalImages; i >= 1; i--) {
                     const div = document.createElement('div');
                     div.className = 'gallery-item scroll-reveal'; 
@@ -350,8 +358,6 @@
                     galleryGrid.appendChild(div);
                 }
             }
-            // --- FIN de la génération dynamique ---
-
 
             // --- Gestion du Menu Mobile ---
             const mobileMenuBtn = document.getElementById('mobile-menu-btn');
@@ -379,28 +385,26 @@
             }
 
             mobileMenuBtn.addEventListener('click', toggleMenu);
-            // Ferme le menu en cliquant sur un lien
             mobileLinks.forEach(link => {
                 link.addEventListener('click', toggleMenu);
             });
 
-            // --- Gestion de la Lightbox (Galerie) ---
+            // --- Gestion de la Lightbox ---
             const lightbox = document.getElementById('lightbox');
             const lightboxImg = document.getElementById('lightbox-img');
-            // Cette requête trouvera maintenant les images générées
-            const galleryItems = document.querySelectorAll('.gallery-item img');
-
-            galleryItems.forEach(img => {
-                img.addEventListener('click', () => {
-                    lightboxImg.src = img.src;
-                    lightbox.classList.add('active');
-                    document.body.classList.add('overflow-hidden'); 
+            // Timeout pour laisser le temps au DOM de se mettre à jour avec les images générées
+            setTimeout(() => {
+                const galleryItems = document.querySelectorAll('.gallery-item img');
+                galleryItems.forEach(img => {
+                    img.addEventListener('click', () => {
+                        lightboxImg.src = img.src;
+                        lightbox.classList.add('active');
+                        document.body.classList.add('overflow-hidden'); 
+                    });
                 });
-            });
+            }, 100);
 
-            // Fonction pour fermer la lightbox (accessible globalement)
             window.closeLightbox = function(event) {
-                // Ne ferme que si on clique sur le fond ou le bouton, pas sur l'image
                 if (event && event.target.id !== 'lightbox' && event.target.id !== 'lightbox-close' && !event.target.closest('#lightbox-close')) {
                     return;
                 }
@@ -408,14 +412,13 @@
                 document.body.classList.remove('overflow-hidden');
             }
             
-            // Fermeture avec la touche "Echap"
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape' && lightbox.classList.contains('active')) {
                     closeLightbox();
                 }
             });
 
-            // --- Gestion du "Scroll Reveal" (Animation à l'apparition) ---
+            // --- Scroll Reveal ---
             const scrollElements = document.querySelectorAll('.scroll-reveal');
 
             const elementInView = (el, percentageScroll = 10) => {
@@ -430,10 +433,6 @@
                 element.classList.add('is-visible');
             };
 
-            const hideScrollElement = (element) => {
-                element.classList.remove('is-visible');
-            };
-
             const handleScrollAnimation = () => {
                 scrollElements.forEach((el) => {
                     if (elementInView(el, 10)) {
@@ -442,11 +441,9 @@
                 })
             }
             
-            // Gère l'animation au chargement et au scroll
             handleScrollAnimation();
             window.addEventListener('scroll', handleScrollAnimation);
             
-            // --- Effet 'shadow' sur le header au scroll ---
             window.addEventListener('scroll', () => {
                 if (window.scrollY > 10) {
                     header.classList.add('shadow-md');
@@ -456,9 +453,98 @@
             });
 
         });
+
+        // --- FONCTIONS PDF (Ajoutées) ---
+        async function generatePortfolioPDF() {
+            const { jsPDF } = window.jspdf;
+            const btn = document.getElementById('download-pdf-btn');
+            const btnText = document.getElementById('btn-text');
+            const loadingText = document.getElementById('loading-text');
+
+            // État de chargement
+            btn.disabled = true;
+            const originalText = btnText.innerText;
+            btnText.innerText = "Génération en cours (0/27)...";
+            loadingText.classList.remove('hidden');
+
+            try {
+                const doc = new jsPDF();
+                const totalImages = 27;
+                const pageWidth = 210; // Largeur A4 en mm
+                const pageHeight = 297; // Hauteur A4 en mm
+                const margin = 10;
+                const maxImgWidth = pageWidth - (margin * 2);
+                const maxImgHeight = pageHeight - (margin * 2);
+
+                // Page de couverture
+                doc.setFont("helvetica", "bold");
+                doc.setFontSize(24);
+                doc.text("Portfolio - Ibra Design", pageWidth / 2, 140, { align: "center" });
+                doc.setFontSize(12);
+                doc.setFont("helvetica", "normal");
+                doc.text("Graphiste & Concepteur d'Affiches", pageWidth / 2, 150, { align: "center" });
+                doc.text("contact@ibradesign.com | +223 70 11 82 47", pageWidth / 2, 160, { align: "center" });
+                
+                // Boucle pour ajouter les images (ordre décroissant)
+                for (let i = totalImages; i >= 1; i--) {
+                    // Mise à jour de l'indicateur
+                    btnText.innerText = `Génération... (${totalImages - i + 1}/${totalImages})`;
+                    
+                    const imageUrl = `images/image${i}.jpg`;
+                    const imgData = await loadImage(imageUrl);
+                    
+                    if (imgData) {
+                        doc.addPage();
+                        
+                        // Calcul des dimensions pour garder le ratio
+                        const imgProps = doc.getImageProperties(imgData);
+                        let w = imgProps.width;
+                        let h = imgProps.height;
+                        
+                        const ratio = Math.min(maxImgWidth / w, maxImgHeight / h);
+                        w = w * ratio;
+                        h = h * ratio;
+                        
+                        const x = (pageWidth - w) / 2;
+                        const y = (pageHeight - h) / 2;
+
+                        doc.addImage(imgData, 'JPEG', x, y, w, h);
+                    }
+                }
+
+                doc.save("Portfolio_Ibra_Design.pdf");
+
+            } catch (error) {
+                console.error("Erreur PDF:", error);
+                alert("Une erreur est survenue lors de la création du PDF. Vérifiez la console pour plus de détails.");
+            } finally {
+                btn.disabled = false;
+                btnText.innerText = originalText;
+                loadingText.classList.add('hidden');
+            }
+        }
+
+        // Helper pour charger une image
+        function loadImage(url) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.src = url;
+                img.crossOrigin = "Anonymous"; 
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0);
+                    resolve(canvas.toDataURL('image/jpeg', 0.8));
+                };
+                img.onerror = function() {
+                    console.warn(`Impossible de charger l'image : ${url}`);
+                    resolve(null);
+                };
+            });
+        }
     </script>
 
 </body>
 </html>
-
-
