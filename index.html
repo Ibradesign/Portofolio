@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ibra Design - Graphiste & Concepteur d'Affiches</title>
+    <title>Ibra Design - Graphiste & Créateur Visuel</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -11,7 +11,7 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700&display=swap" rel="stylesheet">
     
     <script src="https://unpkg.com/lucide-react@latest/dist/umd/lucide-react.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -22,20 +22,26 @@
                 extend: {
                     colors: {
                         primary: {
-                            DEFAULT: '#FF7A00', // Orange principal
-                            dark: '#E66E00',
+                            DEFAULT: '#FF7A00',
+                            hover: '#FF5500',
+                            light: '#FFF0E0',
                         },
                         dark: {
-                            DEFAULT: '#111111', // Noir doux
-                            light: '#222222',
+                            DEFAULT: '#0F0F0F',
+                            surface: '#1A1A1A',
+                            border: '#333333',
                         },
                         light: {
-                            DEFAULT: '#FFFFFF', 
-                            alt: '#F8F8F8', 
+                            DEFAULT: '#FFFFFF',
+                            surface: '#F4F4F5',
                         }
                     },
                     fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Outfit', 'sans-serif'],
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    backgroundImage: {
+                        'grid-pattern': "linear-gradient(to right, #f0f0f0 1px, transparent 1px), linear-gradient(to bottom, #f0f0f0 1px, transparent 1px)",
                     }
                 }
             }
@@ -43,274 +49,293 @@
     </script>
     
     <style>
-        /* Animation Scroll Reveal */
-        .scroll-reveal {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.8s cubic-bezier(0.17, 0.55, 0.55, 1), transform 0.8s cubic-bezier(0.17, 0.55, 0.55, 1);
-            transition-delay: 0.1s;
+        /* --- Base & Animations --- */
+        body {
+            background-color: #FAFAFA;
         }
 
-        .scroll-reveal.is-visible {
+        .bg-grid {
+            background-size: 40px 40px;
+            mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #FF7A00 0%, #FF3D00 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Scroll Reveal */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .reveal.active {
             opacity: 1;
             transform: translateY(0);
         }
 
-        /* Lightbox */
-        #lightbox {
-            position: fixed;
-            z-index: 1000;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.85);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            padding: 2rem;
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            animation: fadeIn 0.3s ease-out;
-        }
-
-        #lightbox.active {
-            display: flex;
-        }
-
-        #lightbox img {
-            max-width: 90vw;
-            max-height: 90vh;
-            object-fit: contain;
-            border-radius: 0.5rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            animation: zoomIn 0.3s cubic-bezier(0.17, 0.55, 0.55, 1);
-        }
-
-        #lightbox-close {
+        /* Lightbox Navigation */
+        .lightbox-nav {
             position: absolute;
-            top: 2rem;
-            right: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.1);
             color: white;
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 1rem;
             cursor: pointer;
-            transition: transform 0.2s ease;
+            border-radius: 50%;
+            transition: all 0.2s;
+            z-index: 1010;
         }
-
-        #lightbox-close:hover {
-            transform: scale(1.1);
+        .lightbox-nav:hover {
+            background: white;
+            color: black;
         }
+        #prev-btn { left: 20px; }
+        #next-btn { right: 20px; }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
         }
-
-        @keyframes zoomIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #FF7A00;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #e66e00;
         }
     </style>
 </head>
 
-<body class="bg-light text-dark font-sans antialiased">
+<body class="text-dark font-sans antialiased overflow-x-hidden">
 
-    <header id="header" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-light/90 shadow-sm backdrop-blur-lg">
-        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="#home" class="text-2xl font-bold text-dark">
-                Ibra <span class="text-primary">Design</span>.
+    <header id="header" class="fixed top-4 left-0 right-0 z-50 px-4 md:px-0">
+        <nav class="container mx-auto bg-white/80 backdrop-blur-md border border-gray-200 rounded-full shadow-lg px-6 py-3 flex justify-between items-center transition-all duration-300">
+            <a href="#home" class="text-xl font-heading font-bold tracking-tight">
+                IBRA<span class="text-primary">DESIGN</span>.
             </a>
             
-            <div class="hidden md:flex space-x-8">
-                <a href="#home" class="text-gray-700 hover:text-primary transition-colors duration-200">Accueil</a>
-                <a href="#about" class="text-gray-700 hover:text-primary transition-colors duration-200">À propos</a>
-                <a href="#portfolio" class="text-gray-700 hover:text-primary transition-colors duration-200">Portfolio</a>
-                <a href="#contact" class="text-gray-700 hover:text-primary transition-colors duration-200">Contact</a>
+            <div class="hidden md:flex space-x-8 text-sm font-medium">
+                <a href="#home" class="hover:text-primary transition-colors">Accueil</a>
+                <a href="#services" class="hover:text-primary transition-colors">Services</a>
+                <a href="#portfolio" class="hover:text-primary transition-colors">Portfolio</a>
+                <a href="#about" class="hover:text-primary transition-colors">À propos</a>
             </div>
             
-            <a href="https://api.whatsapp.com/send?phone=22370118247" target="_blank" class="hidden md:flex items-center bg-primary text-white px-5 py-2 rounded-full font-semibold hover:bg-primary-dark transition-all duration-300 shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 transform hover:-translate-y-0.5">
-                <i data-lucide="phone" class="w-4 h-4 mr-2"></i>
-                Discutons
-            </a>
-            
-            <button id="mobile-menu-btn" class="md:hidden z-[60]">
-                <i data-lucide="menu" class="w-6 h-6" id="menu-icon-open"></i>
-                <i data-lucide="x" class="w-6 h-6 hidden" id="menu-icon-close"></i>
-            </button>
+            <div class="flex items-center gap-4">
+                <a href="#contact" class="hidden md:flex bg-dark text-white px-5 py-2 rounded-full text-sm font-semibold hover:bg-primary transition-colors shadow-lg shadow-primary/20">
+                    Me contacter
+                </a>
+                <button id="mobile-menu-btn" class="md:hidden p-2 text-dark">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
         </nav>
         
-        <div id="mobile-menu" class="fixed inset-0 bg-light z-[55] hidden flex-col items-center justify-center space-y-8 text-2xl font-semibold md:hidden transition-opacity duration-300 opacity-0">
-            <a href="#home" class="mobile-link text-gray-800 hover:text-primary">Accueil</a>
-            <a href="#about" class="mobile-link text-gray-800 hover:text-primary">À propos</a>
-            <a href="#portfolio" class="mobile-link text-gray-800 hover:text-primary">Portfolio</a>
-            <a href="#contact" class="mobile-link text-gray-800 hover:text-primary">Contact</a>
-            <a href="https://api.whatsapp.com/send?phone=22370118247" target="_blank" class="mobile-link flex items-center bg-primary text-white px-6 py-3 rounded-full mt-4">
-                <i data-lucide="phone" class="w-5 h-5 mr-2"></i>
-                Discutons
-            </a>
+        <div id="mobile-menu" class="hidden absolute top-20 left-4 right-4 bg-white rounded-2xl shadow-2xl p-6 flex-col space-y-4 text-center border border-gray-100 origin-top transform transition-all">
+            <a href="#home" class="mobile-link py-2 text-lg font-medium">Accueil</a>
+            <a href="#services" class="mobile-link py-2 text-lg font-medium">Services</a>
+            <a href="#portfolio" class="mobile-link py-2 text-lg font-medium">Portfolio</a>
+            <a href="#contact" class="mobile-link py-2 text-lg font-medium text-primary">Me contacter</a>
         </div>
     </header>
 
     <main>
-
-        <section id="home" class="min-h-screen flex items-center pt-20 bg-light">
-            <div class="container mx-auto px-6 text-center">
-                <div class="max-w-4xl mx-auto">
-                    <div class="scroll-reveal">
-                        <h1 class="text-4xl sm:text-6xl lg:text-7xl font-black text-dark leading-tight mb-6">
-                            Je suis <span class="text-primary">Ibra Design</span>
-                        </h1>
-                        <p class="text-xl md:text-2xl text-gray-700 mb-10 max-w-2xl mx-auto">
-                            Graphiste spécialisé dans la conception d'affiches modernes et percutantes.
-                        </p>
-                        <a href="#portfolio" class="inline-block bg-primary text-white px-10 py-4 rounded-full text-lg font-semibold hover:bg-primary-dark transition-all duration-300 shadow-xl shadow-primary/30 hover:shadow-2xl hover:shadow-primary/40 transform hover:-translate-y-1">
-                            Voir mes réalisations
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="about" class="py-24 md:py-32 bg-light-alt">
-            <div class="container mx-auto px-6">
-                <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-center">
-                    
-                    <div class="scroll-reveal">
-                        <img src="images/ibra.webp" 
-                             alt="Photo de Ibrahima Sané (Ibra Design)" 
-                             class="rounded-tl-[5rem] rounded-br-[5rem] rounded-tr-2xl rounded-bl-2xl shadow-2xl w-full h-auto object-cover aspect-square transition-all duration-300 hover:shadow-primary/20">
-                    </div>
-                    
-                    <div class="scroll-reveal">
-                        <span class="text-primary font-semibold uppercase tracking-wider">À propos de moi</span>
-                        <h2 class="text-3xl md:text-4xl font-bold text-dark mt-2 mb-6">
-                            Passionné par l'impact visuel.
-                        </h2>
-                        <p class="text-lg text-gray-700 leading-relaxed mb-4">
-                            Je suis Ibrahima Sané, un graphiste créatif basé au Mali. Sous le nom d'Ibra Design, je me consacre à transformer des idées en visuels puissants.
-                        </p>
-                        <p class="text-lg text-gray-700 leading-relaxed mb-4">
-                            Avec plusieurs années d'expérience, ma spécialité est la <span class="font-semibold text-dark">création d'affiches</span>. Qu'il s'agisse d'événements culturels, de concerts, de campagnes publicitaires ou de communications d'entreprise, mon objectif est de capter l'attention et de transmettre un message clair.
-                        </p>
-                        <p class="text-lg text-gray-700 leading-relaxed">
-                            Mon style est un mélange de minimalisme moderne et d'énergie vibrante, toujours centré sur une typographie soignée et une composition équilibrée.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="portfolio" class="py-24 md:py-32 bg-light">
-            <div class="container mx-auto px-6">
-                <div class="text-center max-w-2xl mx-auto mb-12 md:mb-16 scroll-reveal">
-                    <span class="text-primary font-semibold uppercase tracking-wider">Portfolio</span>
-                    <h2 class="text-3xl md:text-4xl font-bold text-dark mt-2 mb-4">
-                        Mes Réalisations
-                    </h2>
-                    <p class="text-lg text-gray-700">
-                        Découvrez une sélection de mes meilleures affiches conçues pour divers clients et événements.
-                    </p>
+        <section id="home" class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden bg-light">
+            <div class="absolute inset-0 bg-grid-pattern bg-grid opacity-[0.4] pointer-events-none"></div>
+            <div class="absolute top-20 right-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[100px] pointer-events-none"></div>
+            
+            <div class="container mx-auto px-6 relative z-10 text-center">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider mb-6 border border-primary/20 reveal">
+                    <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                    Disponible pour nouveaux projets
                 </div>
                 
-                <div id="gallery-grid" class="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6">
-                    </div>
-
-                <div class="text-center mt-16 scroll-reveal">
-                    <button id="download-pdf-btn" onclick="generatePortfolioPDF()" class="inline-flex items-center bg-dark text-white px-8 py-3 rounded-full text-lg font-semibold hover:bg-gray-800 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed">
-                        <i data-lucide="download" class="w-5 h-5 mr-2"></i>
-                        <span id="btn-text">Télécharger le Catalogue PDF</span>
-                    </button>
-                    <p id="loading-text" class="text-sm text-gray-500 mt-3 hidden">Création du PDF en cours, cela peut prendre quelques secondes...</p>
+                <h1 class="text-5xl sm:text-7xl lg:text-8xl font-heading font-black leading-[1.1] mb-8 text-dark reveal">
+                    Donnez vie à <br>
+                    <span class="text-gradient">votre vision.</span>
+                </h1>
+                
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto mb-10 reveal" style="transition-delay: 100ms">
+                    Expert en conception graphique et création d'affiches percutantes. Je transforme vos idées en visuels qui marquent les esprits.
+                </p>
+                
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4 reveal" style="transition-delay: 200ms">
+                    <a href="#portfolio" class="w-full sm:w-auto px-8 py-4 bg-primary text-white rounded-full font-bold text-lg shadow-xl shadow-primary/30 hover:shadow-2xl hover:shadow-primary/40 hover:-translate-y-1 transition-all flex items-center justify-center gap-2">
+                        Voir mes créations <i data-lucide="arrow-down" class="w-5 h-5"></i>
+                    </a>
+                    <a href="https://api.whatsapp.com/send?phone=22370118247" target="_blank" class="w-full sm:w-auto px-8 py-4 bg-white text-dark border border-gray-200 rounded-full font-bold text-lg hover:border-dark hover:bg-gray-50 transition-all flex items-center justify-center gap-2">
+                        <i data-lucide="message-circle" class="w-5 h-5"></i> WhatsApp
+                    </a>
                 </div>
 
+                <div class="mt-20 grid grid-cols-2 md:grid-cols-4 gap-8 border-y border-gray-200 py-8 bg-white/50 backdrop-blur-sm reveal" style="transition-delay: 300ms">
+                    <div>
+                        <span class="block text-3xl font-heading font-bold text-dark">5+</span>
+                        <span class="text-sm text-gray-500 uppercase tracking-wide">Années d'Exp.</span>
+                    </div>
+                    <div>
+                        <span class="block text-3xl font-heading font-bold text-dark">27+</span>
+                        <span class="text-sm text-gray-500 uppercase tracking-wide">Projets Publiés</span>
+                    </div>
+                    <div>
+                        <span class="block text-3xl font-heading font-bold text-dark">100%</span>
+                        <span class="text-sm text-gray-500 uppercase tracking-wide">Satisfaction</span>
+                    </div>
+                    <div>
+                        <span class="block text-3xl font-heading font-bold text-dark">24h</span>
+                        <span class="text-sm text-gray-500 uppercase tracking-wide">Réactivité</span>
+                    </div>
+                </div>
             </div>
         </section>
 
-        <section id="contact" class="py-24 md:py-32 bg-light-alt">
+        <section id="services" class="py-24 bg-white">
             <div class="container mx-auto px-6">
-                <div class="text-center max-w-2xl mx-auto mb-12 md:mb-16 scroll-reveal">
-                    <span class="text-primary font-semibold uppercase tracking-wider">Contact</span>
-                    <h2 class="text-3xl md:text-4xl font-bold text-dark mt-2 mb-4">
-                        Travaillons ensemble
-                    </h2>
-                    <p class="text-lg text-gray-700">
-                        Prêt à démarrer un projet ou simplement envie de discuter ? Contactez-moi.
-                    </p>
+                <div class="mb-16 reveal">
+                    <h2 class="text-sm font-bold text-primary uppercase tracking-widest mb-2">Mes Expertises</h2>
+                    <h3 class="text-3xl md:text-4xl font-heading font-bold text-dark">Ce que je peux faire pour vous</h3>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="p-8 rounded-3xl bg-light-surface border border-gray-100 hover:border-primary/30 hover:shadow-xl transition-all duration-300 group reveal">
+                        <div class="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform">
+                            <i data-lucide="layers" class="w-8 h-8"></i>
+                        </div>
+                        <h4 class="text-xl font-bold mb-3">Conception d'Affiches</h4>
+                        <p class="text-gray-600 leading-relaxed">
+                            Affiches de concerts, événements sportifs ou conférences. Des visuels conçus pour capter l'attention instantanément.
+                        </p>
+                    </div>
+
+                    <div class="p-8 rounded-3xl bg-light-surface border border-gray-100 hover:border-primary/30 hover:shadow-xl transition-all duration-300 group reveal" style="transition-delay: 100ms">
+                        <div class="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform">
+                            <i data-lucide="pen-tool" class="w-8 h-8"></i>
+                        </div>
+                        <h4 class="text-xl font-bold mb-3">Identité Visuelle</h4>
+                        <p class="text-gray-600 leading-relaxed">
+                            Création de logos et de chartes graphiques pour donner une identité forte et cohérente à votre marque.
+                        </p>
+                    </div>
+
+                    <div class="p-8 rounded-3xl bg-light-surface border border-gray-100 hover:border-primary/30 hover:shadow-xl transition-all duration-300 group reveal" style="transition-delay: 200ms">
+                        <div class="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform">
+                            <i data-lucide="monitor" class="w-8 h-8"></i>
+                        </div>
+                        <h4 class="text-xl font-bold mb-3">Réseaux Sociaux</h4>
+                        <p class="text-gray-600 leading-relaxed">
+                            Design de posts, stories et bannières pour Instagram, Facebook et LinkedIn afin de booster votre engagement.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="portfolio" class="py-24 bg-dark-surface text-white relative">
+            <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[300px] bg-primary/5 blur-[120px] pointer-events-none"></div>
+
+            <div class="container mx-auto px-6 relative z-10">
+                <div class="text-center mb-16 reveal">
+                    <h2 class="text-sm font-bold text-primary uppercase tracking-widest mb-2">Portfolio</h2>
+                    <h3 class="text-3xl md:text-4xl font-heading font-bold text-white">Dernières Réalisations</h3>
                 </div>
                 
-                <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16">
-                    
-                    <div class="scroll-reveal">
-                        <h3 class="text-2xl font-bold text-dark mb-6">Coordonnées</h3>
-                        
-                        <div class="space-y-6">
-                            <div class="flex items-start space-x-4">
-                                <div class="bg-primary/10 text-primary p-3 rounded-full">
-                                    <i data-lucide="phone" class="w-6 h-6"></i>
-                                </div>
-                                <div>
-                                    <h4 class="text-lg font-semibold text-dark">Téléphone & WhatsApp</h4>
-                                    <p class="text-gray-700">+223 70 11 82 47</p>
-                                    <a href="https://api.whatsapp.com/send?phone=22370118247&text=Bonjour%20Ibra%20Design," target="_blank" class="inline-flex items-center mt-2 text-green-600 font-semibold hover:text-green-700">
-                                        Contacter sur WhatsApp
-                                        <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i>
-                                    </a>
-                                </div>
-                            </div>
+                <div id="gallery-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    </div>
+
+                <div class="text-center mt-20 reveal">
+                    <div class="inline-block p-1 bg-white/5 rounded-full border border-white/10 backdrop-blur-md">
+                        <button id="download-pdf-btn" onclick="generatePortfolioPDF()" class="flex items-center gap-3 bg-white text-dark px-8 py-4 rounded-full text-lg font-bold hover:bg-primary hover:text-white transition-all duration-300 shadow-xl">
+                            <div class="bg-gray-200 p-1 rounded-full"><i data-lucide="download" class="w-5 h-5 text-dark"></i></div>
+                            <span id="btn-text">Télécharger le Catalogue PDF</span>
+                        </button>
+                    </div>
+                    <p id="loading-text" class="text-sm text-gray-400 mt-4 hidden animate-pulse">Compilation du PDF en cours...</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="py-24 bg-light">
+            <div class="container mx-auto px-6">
+                <div class="flex flex-col md:flex-row items-center gap-16">
+                    <div class="w-full md:w-1/2 reveal">
+                        <div class="relative">
+                            <div class="absolute inset-0 bg-primary rounded-2xl rotate-3 opacity-20"></div>
+                            <img src="images/ibra.webp" alt="Ibra Design" class="relative rounded-2xl shadow-2xl w-full object-cover aspect-[4/5] grayscale hover:grayscale-0 transition-all duration-500">
+                        </div>
+                    </div>
+                    <div class="w-full md:w-1/2 reveal">
+                        <h2 class="text-3xl md:text-4xl font-heading font-bold text-dark mb-6">Derrière Ibra Design</h2>
+                        <div class="space-y-4 text-lg text-gray-600">
+                            <p>
+                                Je m'appelle <strong class="text-dark">Ibrahima Sané</strong>. Basé au Mali, je suis obsédé par le détail et la composition visuelle.
+                            </p>
+                            <p>
+                                Mon approche est simple : comprendre l'essence de votre projet pour la traduire en une image qui parle d'elle-même. Pas de superflu, juste de l'impact.
+                            </p>
+                            <ul class="space-y-3 mt-6">
+                                <li class="flex items-center gap-3">
+                                    <i data-lucide="check-circle-2" class="text-primary w-6 h-6"></i>
+                                    <span>Respect strict des délais</span>
+                                </li>
+                                <li class="flex items-center gap-3">
+                                    <i data-lucide="check-circle-2" class="text-primary w-6 h-6"></i>
+                                    <span>Créativité sans limite</span>
+                                </li>
+                                <li class="flex items-center gap-3">
+                                    <i data-lucide="check-circle-2" class="text-primary w-6 h-6"></i>
+                                    <span>Communication fluide</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="py-24 bg-white relative overflow-hidden">
+            <div class="container mx-auto px-6 relative z-10">
+                <div class="bg-dark text-white rounded-[3rem] p-10 md:p-20 shadow-2xl overflow-hidden relative reveal">
+                    <div class="absolute top-0 right-0 w-[400px] h-[400px] bg-primary rounded-full blur-[150px] opacity-30 -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-16">
+                        <div>
+                            <h2 class="text-4xl md:text-5xl font-heading font-bold mb-6">Démarrons un projet.</h2>
+                            <p class="text-gray-300 text-lg mb-10">
+                                Vous avez une idée ? Je suis là pour la réaliser. Disponible pour freelance et collaborations.
+                            </p>
                             
-                            <div class="flex items-start space-x-4">
-                                <div class="bg-primary/10 text-primary p-3 rounded-full">
-                                    <i data-lucide="mail" class="w-6 h-6"></i>
-                                </div>
-                                <div>
-                                    <h4 class="text-lg font-semibold text-dark">Email</h4>
-                                    <p class="text-gray-700">contact@ibradesign.com</p>
-                                    <a href="mailto:contact@ibradesign.com" class="inline-flex items-center mt-2 text-primary font-semibold hover:text-primary-dark">
-                                        Envoyer un email
-                                        <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="mt-10">
-                            <h4 class="text-lg font-semibold text-dark mb-4">Suivez-moi</h4>
-                            <div class="flex space-x-4">
-                                <a href="#" class="text-gray-500 hover:text-primary transition-colors duration-200">
-                                    <i data-lucide="instagram" class="w-7 h-7"></i>
+                            <div class="space-y-6">
+                                <a href="https://api.whatsapp.com/send?phone=22370118247" class="flex items-center gap-4 text-xl font-medium hover:text-primary transition-colors group">
+                                    <div class="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all">
+                                        <i data-lucide="phone" class="w-6 h-6"></i>
+                                    </div>
+                                    +223 70 11 82 47
                                 </a>
-                                <a href="#" class="text-gray-500 hover:text-primary transition-colors duration-200">
-                                    <i data-lucide="facebook" class="w-7 h-7"></i>
-                                </a>
-                                <a href="#" class="text-gray-500 hover:text-primary transition-colors duration-200">
-                                    <i data-lucide="linkedin" class="w-7 h-7"></i>
-                                </a>
-                                <a href="#" class="text-gray-500 hover:text-primary transition-colors duration-200">
-                                    <i data-lucide="behance" class="w-7 h-7"></i>
+                                <a href="mailto:ibradesign.ml@gmail.com" class="flex items-center gap-4 text-xl font-medium hover:text-primary transition-colors group">
+                                    <div class="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all">
+                                        <i data-lucide="mail" class="w-6 h-6"></i>
+                                    </div>
+                                    ibradesign.ml@gmail.com
                                 </a>
                             </div>
                         </div>
-                    </div>
-                    
-                    <div class="scroll-reveal">
-                        <h3 class="text-2xl font-bold text-dark mb-6">Envoyez-moi un message</h3>
-                        <form action="#" method="POST" class="space-y-5">
-                            <div>
-                                <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nom complet</label>
-                                <input type="text" name="name" id="name" required class="block w-full px-4 py-3 rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
-                            </div>
-                            <div>
-                                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                                <input type="email" name="email" id="email" required class="block w-full px-4 py-3 rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
-                            </div>
-                            <div>
-                                <label for="message" class="block text-sm font-medium text-gray-700 mb-1">Message</label>
-                                <textarea name="message" id="message" rows="5" required class="block w-full px-4 py-3 rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary"></textarea>
-                            </div>
-                            <div>
-                                <button type="submit" class="w-full bg-primary text-white px-8 py-3 rounded-full text-lg font-semibold hover:bg-primary-dark transition-all duration-300 shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 transform hover:-translate-y-0.5">
-                                    Envoyer le message
-                                </button>
-                            </div>
+
+                        <form action="#" class="space-y-4">
+                            <input type="text" placeholder="Votre nom" class="w-full px-6 py-4 bg-white/5 border border-white/10 rounded-xl focus:border-primary focus:outline-none text-white placeholder-gray-500 transition-all">
+                            <input type="email" placeholder="Votre email" class="w-full px-6 py-4 bg-white/5 border border-white/10 rounded-xl focus:border-primary focus:outline-none text-white placeholder-gray-500 transition-all">
+                            <textarea rows="4" placeholder="Parlez-moi de votre projet..." class="w-full px-6 py-4 bg-white/5 border border-white/10 rounded-xl focus:border-primary focus:outline-none text-white placeholder-gray-500 transition-all"></textarea>
+                            <button class="w-full py-4 bg-primary text-white font-bold rounded-xl hover:bg-orange-600 transition-all transform hover:scale-[1.02]">
+                                Envoyer le message
+                            </button>
                         </form>
                     </div>
                 </div>
@@ -318,177 +343,191 @@
         </section>
     </main>
 
-    <footer class="bg-dark text-gray-400 py-10">
-        <div class="container mx-auto px-6 text-center">
-            <p>&copy; 2025 <span class="font-semibold text-light">Ibra Design</span> – Tous droits réservés.</p>
-            <p class="text-sm mt-1">Conception de visuels et d'affiches modernes.</p>
+    <footer class="bg-dark py-12 border-t border-gray-800">
+        <div class="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+            <span class="text-2xl font-heading font-bold text-white">IBRA<span class="text-primary">DESIGN</span>.</span>
+            
+            <div class="flex gap-6">
+                <a href="#" class="text-gray-400 hover:text-primary transition-colors"><i data-lucide="instagram"></i></a>
+                <a href="#" class="text-gray-400 hover:text-primary transition-colors"><i data-lucide="facebook"></i></a>
+                <a href="#" class="text-gray-400 hover:text-primary transition-colors"><i data-lucide="linkedin"></i></a>
+            </div>
+            
+            <p class="text-gray-500 text-sm">© 2025 Ibra Design. Tous droits réservés.</p>
         </div>
     </footer>
 
-    <div id="lightbox" onclick="closeLightbox()">
-        <button id="lightbox-close" aria-label="Fermer la vue agrandie">
+    <div id="lightbox" class="fixed inset-0 z-[1000] bg-black/95 hidden flex flex-col justify-center items-center backdrop-blur-sm opacity-0 transition-opacity duration-300 w-full h-full">
+        
+        <button id="lightbox-close" class="absolute top-6 right-6 text-white hover:text-primary transition-transform hover:scale-110 z-[1020]">
             <i data-lucide="x" class="w-10 h-10"></i>
         </button>
-        <img id="lightbox-img" src="" alt="Vue agrandie de l'affiche">
+
+        <button id="prev-btn" class="lightbox-nav"><i data-lucide="chevron-left" class="w-8 h-8"></i></button>
+        <button id="next-btn" class="lightbox-nav"><i data-lucide="chevron-right" class="w-8 h-8"></i></button>
+
+        <img id="lightbox-img" src="" alt="Zoom" class="max-w-[90vw] max-h-[85vh] object-contain rounded-lg shadow-2xl transition-transform duration-300 scale-90 m-auto block">
+        <p id="lightbox-caption" class="text-gray-400 mt-4 font-mono text-sm absolute bottom-10"></p>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            
-            // Initialisation des icônes Lucide
             lucide.createIcons();
 
-            // --- Génération dynamique de la galerie (Ordre Décroissant) ---
+            // --- 1. Gallery Generation ---
             const galleryGrid = document.getElementById('gallery-grid');
-            if (galleryGrid) {
-                const totalImages = 27; 
-                const imagePath = 'images'; 
+            const totalImages = 27; 
+            const images = [];
 
+            if (galleryGrid) {
                 for (let i = totalImages; i >= 1; i--) {
+                    const src = `images/image${i}.jpg`;
+                    images.push(src); // Store for navigation
+                    
                     const div = document.createElement('div');
-                    div.className = 'gallery-item scroll-reveal'; 
+                    div.className = 'group relative overflow-hidden rounded-2xl cursor-pointer reveal'; 
+                    div.setAttribute('onclick', `openLightbox(${totalImages - i})`); // Index based on array
                     
-                    const img = document.createElement('img');
-                    img.src = `${imagePath}/image${i}.jpg`;
-                    img.alt = `Affiche Ibra Design ${i}`;
-                    img.loading = 'lazy'; 
-                    img.className = 'rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105 cursor-pointer w-full';
-                    
-                    div.appendChild(img);
+                    div.innerHTML = `
+                        <img src="${src}" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                        <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                            <div class="bg-white/10 backdrop-blur-md p-3 rounded-full text-white transform translate-y-10 group-hover:translate-y-0 transition-transform duration-300">
+                                <i data-lucide="eye" class="w-6 h-6"></i>
+                            </div>
+                        </div>
+                    `;
                     galleryGrid.appendChild(div);
                 }
+                lucide.createIcons();
             }
 
-            // --- Gestion du Menu Mobile ---
-            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-            const mobileMenu = document.getElementById('mobile-menu');
-            const menuIconOpen = document.getElementById('menu-icon-open');
-            const menuIconClose = document.getElementById('menu-icon-close');
-            const mobileLinks = document.querySelectorAll('.mobile-link');
-            const header = document.getElementById('header');
-            
-            let isMenuOpen = false;
-
-            function toggleMenu() {
-                isMenuOpen = !isMenuOpen;
-                mobileMenu.classList.toggle('hidden');
-                mobileMenu.classList.toggle('flex');
-                setTimeout(() => {
-                    mobileMenu.classList.toggle('opacity-0');
-                    mobileMenu.classList.toggle('opacity-100');
-                }, 10); 
-                
-                menuIconOpen.classList.toggle('hidden');
-                menuIconClose.classList.toggle('hidden');
-                document.body.classList.toggle('overflow-hidden'); 
-                header.classList.toggle('bg-light'); 
-            }
-
-            mobileMenuBtn.addEventListener('click', toggleMenu);
-            mobileLinks.forEach(link => {
-                link.addEventListener('click', toggleMenu);
-            });
-
-            // --- Gestion de la Lightbox ---
+            // --- 2. Lightbox Logic V2 (Next/Prev) ---
             const lightbox = document.getElementById('lightbox');
             const lightboxImg = document.getElementById('lightbox-img');
-            // Timeout pour laisser le temps au DOM de se mettre à jour avec les images générées
-            setTimeout(() => {
-                const galleryItems = document.querySelectorAll('.gallery-item img');
-                galleryItems.forEach(img => {
-                    img.addEventListener('click', () => {
-                        lightboxImg.src = img.src;
-                        lightbox.classList.add('active');
-                        document.body.classList.add('overflow-hidden'); 
-                    });
+            let currentIndex = 0;
+
+            window.openLightbox = function(index) {
+                currentIndex = index;
+                updateLightboxImage();
+                // Assure que display: flex est appliqué en retirant hidden
+                lightbox.classList.remove('hidden');
+                lightbox.classList.add('flex'); // Force flex explicitly just in case
+                
+                // Petit délai pour l'animation CSS
+                requestAnimationFrame(() => {
+                    lightbox.classList.remove('opacity-0');
+                    lightboxImg.classList.remove('scale-90');
+                    lightboxImg.classList.add('scale-100');
                 });
-            }, 100);
-
-            window.closeLightbox = function(event) {
-                if (event && event.target.id !== 'lightbox' && event.target.id !== 'lightbox-close' && !event.target.closest('#lightbox-close')) {
-                    return;
-                }
-                lightbox.classList.remove('active');
-                document.body.classList.remove('overflow-hidden');
+                document.body.style.overflow = 'hidden';
             }
+
+            function updateLightboxImage() {
+                lightboxImg.src = images[currentIndex];
+            }
+
+            function closeLightbox() {
+                lightbox.classList.add('opacity-0');
+                lightboxImg.classList.remove('scale-100');
+                lightboxImg.classList.add('scale-90');
+                setTimeout(() => {
+                    lightbox.classList.add('hidden');
+                    lightbox.classList.remove('flex');
+                    document.body.style.overflow = '';
+                }, 300);
+            }
+
+            document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
             
+            // Navigation Clicks
+            document.getElementById('prev-btn').addEventListener('click', (e) => {
+                e.stopPropagation();
+                currentIndex = (currentIndex > 0) ? currentIndex - 1 : images.length - 1;
+                updateLightboxImage();
+            });
+
+            document.getElementById('next-btn').addEventListener('click', (e) => {
+                e.stopPropagation();
+                currentIndex = (currentIndex < images.length - 1) ? currentIndex + 1 : 0;
+                updateLightboxImage();
+            });
+
+            // Keyboard Nav
             document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape' && lightbox.classList.contains('active')) {
-                    closeLightbox();
-                }
+                if (lightbox.classList.contains('hidden')) return;
+                if (e.key === 'Escape') closeLightbox();
+                if (e.key === 'ArrowLeft') document.getElementById('prev-btn').click();
+                if (e.key === 'ArrowRight') document.getElementById('next-btn').click();
             });
 
-            // --- Scroll Reveal ---
-            const scrollElements = document.querySelectorAll('.scroll-reveal');
+            // --- 3. Scroll Reveal Animation ---
+            const observerOptions = { threshold: 0.1 };
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                    }
+                });
+            }, observerOptions);
 
-            const elementInView = (el, percentageScroll = 10) => {
-                const elementTop = el.getBoundingClientRect().top;
-                return (
-                    elementTop <= 
-                    (window.innerHeight || document.documentElement.clientHeight) * (1 - percentageScroll/100)
-                );
-            };
+            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-            const displayScrollElement = (element) => {
-                element.classList.add('is-visible');
-            };
-
-            const handleScrollAnimation = () => {
-                scrollElements.forEach((el) => {
-                    if (elementInView(el, 10)) {
-                        displayScrollElement(el);
-                    } 
-                })
-            }
+            // --- 4. Mobile Menu ---
+            const btn = document.getElementById('mobile-menu-btn');
+            const menu = document.getElementById('mobile-menu');
             
-            handleScrollAnimation();
-            window.addEventListener('scroll', handleScrollAnimation);
-            
-            window.addEventListener('scroll', () => {
-                if (window.scrollY > 10) {
-                    header.classList.add('shadow-md');
-                } else {
-                    header.classList.remove('shadow-md');
-                }
+            btn.addEventListener('click', () => {
+                menu.classList.toggle('hidden');
+                menu.classList.toggle('flex');
             });
-
+            
+            // Close menu on link click
+            document.querySelectorAll('.mobile-link').forEach(link => {
+                link.addEventListener('click', () => menu.classList.add('hidden'));
+            });
         });
 
-        // --- FONCTIONS PDF (Ajoutées) ---
+        // --- 5. PDF Generation (Optimized) ---
         async function generatePortfolioPDF() {
             const { jsPDF } = window.jspdf;
             const btn = document.getElementById('download-pdf-btn');
             const btnText = document.getElementById('btn-text');
             const loadingText = document.getElementById('loading-text');
 
-            // État de chargement
             btn.disabled = true;
-            const originalText = btnText.innerText;
-            btnText.innerText = "Génération en cours (0/27)...";
+            btn.classList.add('opacity-75');
             loadingText.classList.remove('hidden');
+            const originalText = btnText.innerText;
 
             try {
                 const doc = new jsPDF();
                 const totalImages = 27;
-                const pageWidth = 210; // Largeur A4 en mm
-                const pageHeight = 297; // Hauteur A4 en mm
-                const margin = 10;
-                const maxImgWidth = pageWidth - (margin * 2);
-                const maxImgHeight = pageHeight - (margin * 2);
+                const pageWidth = 210; 
+                const pageHeight = 297; 
 
-                // Page de couverture
-                doc.setFont("helvetica", "bold");
-                doc.setFontSize(24);
-                doc.text("Portfolio - Ibra Design", pageWidth / 2, 140, { align: "center" });
-                doc.setFontSize(12);
-                doc.setFont("helvetica", "normal");
-                doc.text("Graphiste & Concepteur d'Affiches", pageWidth / 2, 150, { align: "center" });
-                doc.text("contact@ibradesign.com | +223 70 11 82 47", pageWidth / 2, 160, { align: "center" });
+                // Couverture V2 Design
+                doc.setFillColor(15, 15, 15); // Fond Noir (Dark theme)
+                doc.rect(0, 0, pageWidth, pageHeight, 'F');
                 
-                // Boucle pour ajouter les images (ordre décroissant)
+                doc.setTextColor(255, 122, 0); // Orange
+                doc.setFont("helvetica", "bold");
+                doc.setFontSize(40);
+                doc.text("PORTFOLIO", pageWidth / 2, 120, { align: "center" });
+                
+                doc.setTextColor(255, 255, 255);
+                doc.setFontSize(20);
+                doc.text("IBRA DESIGN", pageWidth / 2, 135, { align: "center" });
+                
+                doc.setFontSize(14);
+                doc.setTextColor(200, 200, 200);
+                doc.text("ibradesign.ml@gmail.com", pageWidth / 2, 150, { align: "center" });
+                
+                doc.setFontSize(12);
+                doc.setTextColor(150, 150, 150);
+                doc.text("2025 EDITION", pageWidth / 2, 260, { align: "center" });
+
                 for (let i = totalImages; i >= 1; i--) {
-                    // Mise à jour de l'indicateur
-                    btnText.innerText = `Génération... (${totalImages - i + 1}/${totalImages})`;
+                    btnText.innerText = `Exportation... ${Math.round(((totalImages - i) / totalImages) * 100)}%`;
                     
                     const imageUrl = `images/image${i}.jpg`;
                     const imgData = await loadImage(imageUrl);
@@ -496,12 +535,14 @@
                     if (imgData) {
                         doc.addPage();
                         
-                        // Calcul des dimensions pour garder le ratio
                         const imgProps = doc.getImageProperties(imgData);
+                        const margin = 10;
+                        const maxW = pageWidth - (margin * 2);
+                        const maxH = pageHeight - (margin * 2);
+                        
                         let w = imgProps.width;
                         let h = imgProps.height;
-                        
-                        const ratio = Math.min(maxImgWidth / w, maxImgHeight / h);
+                        const ratio = Math.min(maxW / w, maxH / h);
                         w = w * ratio;
                         h = h * ratio;
                         
@@ -512,39 +553,35 @@
                     }
                 }
 
-                doc.save("Portfolio_Ibra_Design.pdf");
+                doc.save("Ibra_Design_Portfolio_V2.pdf");
 
             } catch (error) {
-                console.error("Erreur PDF:", error);
-                alert("Une erreur est survenue lors de la création du PDF. Vérifiez la console pour plus de détails.");
+                console.error(error);
+                alert("Erreur lors de la génération.");
             } finally {
                 btn.disabled = false;
+                btn.classList.remove('opacity-75');
                 btnText.innerText = originalText;
                 loadingText.classList.add('hidden');
             }
         }
 
-        // Helper pour charger une image
         function loadImage(url) {
             return new Promise((resolve) => {
                 const img = new Image();
                 img.src = url;
-                img.crossOrigin = "Anonymous"; 
-                img.onload = function() {
+                img.crossOrigin = "Anonymous";
+                img.onload = () => {
                     const canvas = document.createElement('canvas');
                     canvas.width = img.width;
                     canvas.height = img.height;
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0);
-                    resolve(canvas.toDataURL('image/jpeg', 0.8));
+                    resolve(canvas.toDataURL('image/jpeg', 0.85));
                 };
-                img.onerror = function() {
-                    console.warn(`Impossible de charger l'image : ${url}`);
-                    resolve(null);
-                };
+                img.onerror = () => resolve(null);
             });
         }
     </script>
-
 </body>
 </html>
